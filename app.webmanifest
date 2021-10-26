@@ -1,0 +1,15 @@
+{
+    "background_color": "purple",
+    "description": "Infinity Login",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+            "type": "image/png"
+        }
+    ],
+    "name": "Infinity Login",
+    "short_name": "Infinity",
+    "start_url": "https://nickslash.uk/infinity-login"
+}
