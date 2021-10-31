@@ -87,6 +87,7 @@
         }
     </style>
     <script>
+        const scale = 2;
         const key_name = "infinity_key";
         window.addEventListener("load", (e) => {
             const key_scan = document.getElementById('key_scan');
@@ -114,7 +115,7 @@
 
             let draw = () => {
                 while (key_barcode.firstChild) { key_barcode.removeChild(key_barcode.lastChild); };
-                let options = { "text": localStorage.getItem(key_name), "bcid": "azteccode", "scaleX": 4, "scaleY": 4, "format": "full" };
+                let options = { "text": localStorage.getItem(key_name), "bcid": "azteccode", "scaleX": scale, "scaleY": scale, "format": "full" };
                 key_barcode.innerHTML = bwipjs.render( options, DrawingSVG( options, bwipjs.FontLib ) );
             };
 
