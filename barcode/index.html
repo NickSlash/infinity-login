@@ -23,7 +23,7 @@
                 context.translate(image.height, image.width/image.height)
                 context.rotate(Math.PI/2)
                 context.drawImage(image, 0,0)
-                callback(context.toDataURL())
+                callback(canvas.toDataURL())
             })
         }
         document.addEventListener("DOMContentLoaded", (event) => {
