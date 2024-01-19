@@ -34,15 +34,27 @@
             button.addEventListener("click", (event) => {
                 JsBarcode(canvas, barcode.value, barcodeConfig)
                 rotateDataURL(canvas.toDataURL("image/png"), (result) => {
-                    window.location.href = result
+                    let images = document.getElementsByTagName("img")
+                    while (images.length > 0) { images[0].parentNode.removeChild(images[0]) }
+                    let image = document.createElement("img")
+                    image.src = result
+                    document.body.appendChild(image)
                 })
             })
         })
     </script>
+    <style>
+        canvas {
+            display: none;
+        }
+        img {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
     <input type="text" id="barcode">
     <button id="button">Generate Barcode</button>
-    <canvas id="canvas" style="display: none"></canvas>
+    <canvas id="canvas"></canvas>
 </body>
 </html>
