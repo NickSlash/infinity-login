@@ -2,59 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/bwip-js@4.2.0/dist/bwip-js.min.js"></script>
     <title>Barcode Generator</title>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode/dist/JsBarcode.all.min.js"></script>
     <script>
-        let barcodeConfig = {
-            format: "code128",
-            displayValue: false,
-            background: "#ffffff"
+        const crop = ({source, targetHeight = undefined, targetWidth = undefined, borderWidth = 1}={}) => {
+            let canvas = document.createElement("canvas")
+            let border = 2 * borderWidth
+            canvas.height = (targetHeight ? targetHeight : source.height) + border
+            canvas.width = (targetWidth ? targetWidth : source.width) + border
+            let context = canvas.getContext("2d")
+            context.fillStyle = "#ffffff"
+            context.fillRect(0,0, canvas.width, canvas.height)
+            context.drawImage(source, 0,0,canvas.width-border, canvas.height-border, borderWidth, borderWidth, canvas.width - border, canvas.height - border)
+            return canvas
         }
-        function rotateDataURL(data, callback) {
-            let image = new Image()
-            image.src = data
-            image.addEventListener("load", (event) => { 
-                let canvas = document.createElement("canvas")
-                canvas.width = image.height
-                canvas.height = image.width
-                let context = canvas.getContext("2d")
-                context.imageSmoothingEnabled = false
-                context.translate(image.height, image.width/image.height)
-                context.rotate(Math.PI/2)
-                context.drawImage(image, 0,0)
-                callback(canvas.toDataURL())
-            })
-        }
-        document.addEventListener("DOMContentLoaded", (event) => {
+        document.addEventListener("DOMContentLoaded", () => {
+            let text = document.querySelector("#text")
             let button = document.querySelector("#button")
-            let barcode = document.querySelector("#barcode")
 
-            let canvas = document.querySelector("#canvas")
+            text.addEventListener("keyup", (event) => {
+                if (event.key == "enter" || event.keyCode === 13) {
+                    button.click()
+                }
+            })
+
             button.addEventListener("click", (event) => {
-                JsBarcode(canvas, barcode.value, barcodeConfig)
-                rotateDataURL(canvas.toDataURL("image/png"), (result) => {
-                    let images = document.getElementsByTagName("img")
-                    while (images.length > 0) { images[0].parentNode.removeChild(images[0]) }
-                    let image = document.createElement("img")
-                    image.src = result
-                    document.body.appendChild(image)
+                let canvas = document.createElement("canvas")
+                let result = bwipjs.toCanvas(canvas, { 
+                        bcid: 'code128', 
+                        text: text.value, 
+                        includetext: false,
+                        padding: 0,
+                        backgroundcolor: "#ffffff",
+                        barcolor: "#000000",
+                        rotate: "R",
+                        scale: 1,
+                        parse: true
+                })
+                crop({
+                    source: canvas,
+                    targetWidth: 30,
+                    borderWidth: 5
+                }).toBlob( (blob) => {
+                    window.open(URL.createObjectURL(blob, "image/png"), "_blank")
                 })
             })
         })
     </script>
-    <style>
-        canvas {
-            display: none;
-        }
-        img {
-            border: 1px solid black;
-        }
-    </style>
 </head>
 <body>
-    <input type="text" id="barcode">
-    <button id="button">Generate Barcode</button>
-    <canvas id="canvas"></canvas>
+<input type="text" id="text" value="user@email.com"><button id="button">Generate</button>
 </body>
 </html>
